@@ -18,6 +18,7 @@ import spray.http.StatusCodes
 import spray.httpx.SprayJsonSupport.sprayJsonMarshaller
 import spray.json.DefaultJsonProtocol._
 import spray.routing.{ HttpService, Route, RequestContext }
+import spray.http.HttpHeaders.RawHeader
 
 class WebApi(system: ActorSystem,
              config: Config,
@@ -167,6 +168,9 @@ class WebApi(system: ActorSystem,
     } ~ pathPrefix("html") {
       // Static files needed by index.html
       getFromResourceDirectory("html")
+    } ~ pathPrefix("graph") {
+      // Static files needed by index.html
+      getFromResourceDirectory("html/graph")
     }
   }
 
@@ -190,13 +194,14 @@ class WebApi(system: ActorSystem,
       val renderOptions = ConfigRenderOptions.defaults().setComments(false).setOriginComments(false)
 
       val future = jobInfo ? GetJobConfig(jobId)
-      respondWithMediaType(MediaTypes.`application/json`) { ctx =>
+      respondWithMediaType(MediaTypes.`application/json`) {
+        respondWithHeader(RawHeader("Access-Control-Allow-Origin","*")){ ctx =>
         future.map {
           case NoSuchJobId =>
             notFound(ctx, "No such job ID " + jobId.toString)
           case cnf: Config =>
             ctx.complete(cnf.root().render(renderOptions))
-        }
+        }}
       }
     } ~
       // GET /jobs/<jobId>  returns the result in JSON form in a table
@@ -299,7 +304,9 @@ class WebApi(system: ActorSystem,
                 val timeout = timeoutOpt.map(t => Timeout(t.seconds)).getOrElse(DefaultSyncTimeout)
                 val future = jobManager.get.ask(
                   JobManagerActor.StartJob(appName, classPath, jobConfig, events))(timeout)
-                respondWithMediaType(MediaTypes.`application/json`) { ctx =>
+                respondWithMediaType(MediaTypes.`application/json`) {
+                  println("Responding...")
+                  respondWithHeader(RawHeader("Access-Control-Allow-Origin","*")){ ctx =>
                   future.map {
                     case JobResult(_, res)       => ctx.complete(resultToTable(res))
                     case JobErroredOut(_, _, ex) => ctx.complete(errMap(ex, "ERROR"))
@@ -323,7 +330,7 @@ class WebApi(system: ActorSystem,
                     case ContextInitError(e) => ctx.complete(500, errMap(e, "CONTEXT INIT FAILED"))
                   }.recover {
                     case e: Exception => ctx.complete(500, errMap(e, "ERROR"))
-                  }
+                  }}
                 }
               } catch {
                 case e: NoSuchElementException =>
