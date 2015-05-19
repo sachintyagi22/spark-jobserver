@@ -1,0 +1,317 @@
+<html lang="en">
+<head>
+    <title>BetterDocs</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:600,400' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="stylesheets/jquery.remodal.css"/>
+    <link type="text/css" rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.0.5/css/tooltipster.css"/>
+    <link type="text/css" rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.0.5/css/themes/tooltipster-light.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/demo.css"/>
+</head>
+<body>
+
+
+<div class="remodal-bg">
+    <div class="topPanel">
+        <span class="logo">BetterDocs</span>
+
+        <div class="searchForm">
+            <form id="searchByFQN">
+                <span class="searchIcon"><i class="fa fa-search fa-flip-horizontal"></i></span>
+                <input type="text" id="searchString" required
+                       placeholder="FileChannel,MappedByteBuffer">
+            </form>
+        </div>
+        <span class="settingsIcon"><a href="#modal"><i class="fa fa-cog"></i></a></span>
+    </div>
+    <div class="container">
+        <div class="searchResults">
+            <div id="connectionError" class="alert-box error">
+                <i class="fa fa-times-circle"></i> <span>error: </span> <span id="errorMsg"></span>
+            </div>
+
+            <div id="leftPanel">
+                <div class="repoInfo leftPanelPadding" id="analyzedProj">
+                    <h3>Analyzed Projects</h3>
+                    <select id="repoList">
+                    </select>
+                </div>
+
+                <div id="searchMeta">
+                    <div class="tabs">
+                        <div id="fileTab" onclick="app.showFiles()">Files</div>
+                        <div id="methodTab" onclick="app.showMethods()">Methods</div>
+                    </div>
+                    <div>
+                        <div id="resultTreeContainer" class="leftPanelContent leftPanelPadding"></div>
+                        <div id="methodsContainer" class="leftPanelContent leftPanelPadding"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rightContainer" id="rightSideContainer">
+                <div class="resultHeader">
+                    <span id="expand" class="viewOptions">
+                        <a href="javascript:void(0);" onclick="app.expand()"><i class="fa fa-expand pull-right"></i></a>
+                    </span>
+                    <span id="compress" class="viewOptions">
+                        <a href="javascript:void(0);" onclick="app.compress()"><i class="fa fa-compress pull-right"></i></a>
+                    </span>
+                </div>
+                <div id="graph-container" class="resultContainer">
+			
+		</div>
+            </div>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+<div class="remodal" data-remodal-id="modal">
+    <div class="heading">
+        Configuration
+    </div>
+    <div class="modalContent">
+        <form>
+            <input type="text" id="elasticSearchURL"
+                   placeholder="BetterDocs URL" value="http://labs.imaginea.com/betterdocs"><br/>
+            <input type="number" id="resultSize" value="50" placeholder="Result size">
+        </form>
+    </div>
+    <footer>
+        <div class="modalFooter">
+            <a class="remodal-confirm" href="#">Save</a>
+        </div>
+    </footer>
+</div>
+
+<div id="form">
+<form name="getGraph" onsubmit="return submitClassForm()" method="post">
+Class: <INPUT NAME="clazz"><INPUT TYPE=SUBMIT VALUE="Submit">
+</form>
+</div>
+
+<!-- START SIGMA IMPORTS -->
+<script src="../src/sigma.core.js"></script>
+<script src="../src/conrad.js"></script>
+<script src="../src/utils/sigma.utils.js"></script>
+<script src="../src/utils/sigma.polyfills.js"></script>
+<script src="../src/sigma.settings.js"></script>
+<script src="../src/classes/sigma.classes.dispatcher.js"></script>
+<script src="../src/classes/sigma.classes.configurable.js"></script>
+<script src="../src/classes/sigma.classes.graph.js"></script>
+<script src="../src/classes/sigma.classes.camera.js"></script>
+<script src="../src/classes/sigma.classes.quad.js"></script>
+<script src="../src/classes/sigma.classes.edgequad.js"></script>
+<script src="../src/captors/sigma.captors.mouse.js"></script>
+<script src="../src/captors/sigma.captors.touch.js"></script>
+<script src="../src/renderers/sigma.renderers.canvas.js"></script>
+<script src="../src/renderers/sigma.renderers.webgl.js"></script>
+<script src="../src/renderers/sigma.renderers.svg.js"></script>
+<script src="../src/renderers/sigma.renderers.def.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.nodes.invisible.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.invisible.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.utils.js"></script>
+<script src="../src/renderers/svg/sigma.svg.nodes.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.edges.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.edges.curve.js"></script>
+<script src="../src/renderers/svg/sigma.svg.labels.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.hovers.def.js"></script>
+<script src="../src/middlewares/sigma.middlewares.rescale.js"></script>
+<script src="../src/middlewares/sigma.middlewares.copy.js"></script>
+<script src="../src/misc/sigma.misc.animation.js"></script>
+<script src="../src/misc/sigma.misc.bindEvents.js"></script>
+<script src="../src/misc/sigma.misc.bindDOMEvents.js"></script>
+<script src="../src/misc/sigma.misc.drawHovers.js"></script>
+<script src="../plugins/sigma.parsers.json/sigma.parsers.json.js"></script>
+<!-- END SIGMA IMPORTS -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.8/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js" type="text/javascript"
+        charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.0.5/js/jquery.tooltipster.js" type="text/javascript"
+        charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.min.js" type="text/javascript"
+        charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.4.0/lodash.min.js" type="text/javascript"
+        charset="utf-8"></script>
+<script src="javascripts/jquery.remodal.js"></script>
+
+<script src="javascripts/app.js"></script>
+<script>
+    //app.initialize();
+</script>
+<script>
+
+var g = {
+        nodes: [],
+        edges: []
+    };
+var invisibleNodes = {};
+var selectedNodes = {};
+var selectedEdges = {};
+var defaultNodeColor = '#000';
+var selectedNodeColor = '#00f';
+s = new sigma({
+   graph: g,
+   container: 'graph-container',
+   renderer: {
+    container: document.getElementById('graph-container'),
+    type: 'canvas'
+   },
+   settings: {
+    doubleClickEnabled: false,
+    enableEdgeHovering: true,
+    //edgeHoverColor: 'edge',
+    minNodeSize: 3,
+    maxNodeSize: 20,
+    minEdgeSize: 1,
+    maxEdgeSize: 5
+   }
+   });
+
+s.bind('clickEdge', function(e) {
+
+  console.log(e.type, e.data.edge, e.data.captor);
+  var edge = e.data.edge;
+
+ 	if(edge.id in selectedEdges){
+		delete selectedEdges[edge.id];
+		edge.color = defaultNodeColor;
+	   }else{	
+		selectedEdges[edge.id]=true;
+		edge.color = selectedNodeColor;
+	   }
+
+	s.refresh();
+});
+
+s.bind('rightClickStage', function(e) {
+  console.log(e.type, e.data.captor);
+});
+
+s.bind('clickNode', function(e) {
+	
+	var srcId = e.data.node.id;
+	var srcNode = s.graph.nodes(srcId);
+        
+	if(e.data.captor.ctrlKey){
+	   if(srcId in selectedNodes){
+		delete selectedNodes[srcId];
+		srcNode.color = defaultNodeColor;
+	   }else{	
+		selectedNodes[srcId]=true;
+		srcNode.color = selectedNodeColor;
+	   }
+		
+	}else{
+
+        // console.log(e.data.node.label);
+
+	var targetNodes = [];
+	var edges = s.graph.edges();
+
+        if(srcId in invisibleNodes){
+		return;	
+	}
+
+        for (j=0; j< edges.length; j++){
+	    if(edges[j].source == srcId){
+		edges[j].type = 'arrow';
+		if(edges[j].target in invisibleNodes){
+
+			delete invisibleNodes[edges[j].target];
+			targetNode = s.graph.nodes(edges[j].target);		
+			targetNode.type='';
+			targetNode.y=s.graph.nodes(edges[j].source).y+3;
+			
+			if(s.graph.degree(targetNode.id, "out")==0){
+				targetNode.color = "#FF0000";			
+			}
+			
+			targetNodes.push(targetNode);
+		}
+	    }
+	}
+	var len = targetNodes.length;
+	for(i=0; i<len; i++){
+	   targetNodes[i].x = srcNode.x + len/2 + -i;
+	}	
+    }
+
+    s.refresh();
+});
+
+function submitClassForm(){
+var clazz = document.getGraph.clazz.value;
+$.ajax({
+    url: 'http://localhost:8090/jobs?appName=test&classPath=com.betterdocs.spark.jobs.BuildCallGraphJob&context=test-context&sync=true',
+    type: 'POST',
+    data: 'class="' + clazz + '",support="0.25",excludeTests="true"', // or $('#myform').serializeArray()
+    success: function(d) { 
+                              var data = JSON.parse(d.result); 
+			      s.graph.clear();
+			      s.graph.read(data);
+		              // this below adds x, y attributes as well as size = degree of the node 
+            		      var i, 
+			      nodes = s.graph.nodes(),
+			      edges = s.graph.edges(),
+        	              len = nodes.length;
+
+           		      for (i = 0; i < len; i++) {
+				nodes[i].x = Math.random()* (5 - 0) + 0;
+				nodes[i].y = Math.random()* (1	 - 0) + 0;
+				nodes[i].color = defaultNodeColor;
+				//nodes[i].size = s.graph.degree(nodes[i].id);
+			
+				if(s.graph.degree(nodes[i].id, "out")==0 || nodes[i].label.indexOf(clazz) == -1){
+					nodes[i].type ='invisible';
+					invisibleNodes[nodes[i].id]=true;}
+				    }
+			      
+                              for (j=0; j< edges.length; j++){
+				if(edges[j].source in invisibleNodes || edges[j].target in invisibleNodes){
+					edges[j].type = 'invisible';
+				}
+					
+			}
+
+			    // Refresh the display:
+			    s.refresh();
+
+			    // ForceAtlas Layout
+			   // s.startForceAtlas2();
+		        }
+});
+
+return false;
+
+}
+
+</script>
+
+</body>
+</html>
+
+

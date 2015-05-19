@@ -1,0 +1,242 @@
+
+<html lang="en">
+<head>
+    <title>BetterDocs</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:600,400' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link type="text/css" rel="stylesheet" href="stylesheets/jquery.remodal.css"/>
+    <link type="text/css" rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.0.5/css/tooltipster.css"/>
+    <link type="text/css" rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.0.5/css/themes/tooltipster-light.css"/>
+    <link type="text/css" rel="stylesheet" href="stylesheets/demo.css"/>
+</head>
+<body>
+<div class="remodal-bg">
+    <div class="topPanel">
+        <span class="logo">BetterDocs</span>
+
+        <div class="searchForm">
+            <form id="searchByFQN">
+                <span class="searchIcon"><i class="fa fa-search fa-flip-horizontal"></i></span>
+                <input type="text" id="searchString" required
+                       placeholder="FileChannel,MappedByteBuffer">
+            </form>
+        </div>
+        <span class="settingsIcon"><a href="#modal"><i class="fa fa-cog"></i></a></span>
+    </div>
+    <div class="container">
+        <div class="searchResults">
+            <div id="connectionError" class="alert-box error">
+                <i class="fa fa-times-circle"></i> <span>error: </span> <span id="errorMsg"></span>
+            </div>
+
+            <div id="leftPanel">
+                <div class="repoInfo leftPanelPadding" id="analyzedProj">
+                    <h3>Analyzed Projects</h3>
+                    <select id="repoList">
+                    </select>
+                </div>
+
+                <div id="searchMeta">
+                    <div class="tabs">
+                        <div id="fileTab" onclick="app.showFiles()">Files</div>
+                        <div id="methodTab" onclick="app.showMethods()">Methods</div>
+                    </div>
+                    <div>
+                        <div id="resultTreeContainer" class="leftPanelContent leftPanelPadding"></div>
+                        <div id="methodsContainer" class="leftPanelContent leftPanelPadding"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rightContainer" id="rightSideContainer">
+                <div class="resultHeader">
+                    <span id="expand" class="viewOptions">
+                        <a href="javascript:void(0);" onclick="app.expand()"><i class="fa fa-expand pull-right"></i></a>
+                    </span>
+                    <span id="compress" class="viewOptions">
+                        <a href="javascript:void(0);" onclick="app.compress()"><i class="fa fa-compress pull-right"></i></a>
+                    </span>
+                </div>
+                 <div class="tabs">
+                     <div id="graphTab" onclick="app.showGraph()">Graph</div>
+                     <div id="usageTab" onclick="app.showUsage()">Usage</div>
+                 </div>
+                <div>
+                	<div id="usage-container" class="resultContainer"></div>
+                	<div id="graph-container" class="resultContainer"></div>
+                	
+                </div>
+            </div>
+
+        </div>
+        
+        <script id="result-template" type="text/x-handlebars-template">
+            {{#each files}}
+            <div class="result" id="result{{@index}}">
+                <div class="fileHeader">
+                    <a href="http://github.com/{{path}}" target="_blank">{{repo}}/{{name}}</a>
+                    <span class="pull-right codeIcon"><a href="javascript:void(0);"
+                                                         onclick="{{stringifyFunc 'collapse' @index lines}}">
+                        <i class="fa fa-caret-square-o-down"></i></a></span>
+                    <span class="pull-right codeIcon"><a href="javascript:void(0);"
+                                                         onclick="{{stringifyFunc 'expand' @index lines}}"><i
+                            class="fa fa-caret-square-o-right"></i></a></span>
+                </div>
+                <div id="result{{@index}}-editor" class="editor">{{content}}</div>
+            </div>
+            {{/each}}
+        </script>
+        <script id="result-tree-template" type="text/x-handlebars-template">
+            <h3>Files</h3>
+            <div id="resultTree">
+                <ul>
+                    {{#each projects}}
+                    <li>{{name}}</li>
+                    <ul>
+                        {{#each files}}
+                        <li class="clickable" onclick="{{updateEditorFn @this}}">{{name}}</li>
+                        {{/each}}
+                    </ul>
+                    {{/each}}
+                </ul>
+                {{#each examples}}
+                <div>{{this}}</div>
+                {{/each}}
+            </div>
+        </script>
+        <script id="common-usage-template" type="text/x-handlebars-template">
+            <h3>Commonly Used Methods </h3>
+            <div id="commonMethods">
+                <ul>{{#each groupedMethods}}
+                    <li><span>{{className}}</span>
+                        <span class="documentation"><a href="{{docUrl url}}" target="_blank" class="pull-right">API
+                            Docs</a></span>
+                    </li>
+                    <ul>
+                        {{#each methods}}
+                        <li class="clickable"><span id="{{id}}">{{method}}</span></li>
+                        {{/each}}
+                    </ul>
+                    {{/each}}
+                </ul>
+            </div>
+        </script>
+        
+    </div>
+</div>
+<div class="remodal" data-remodal-id="modal">
+    <div class="heading">
+        Configuration
+    </div>
+    <div class="modalContent">
+        <form>
+            <input type="text" id="elasticSearchURL"
+                   placeholder="BetterDocs URL" value="http://labs.imaginea.com/betterdocs"><br/>
+            <input type="number" id="resultSize" value="50" placeholder="Result size">
+        </form>
+    </div>
+    <footer>
+        <div class="modalFooter">
+            <a class="remodal-confirm" href="#">Save</a>
+        </div>
+    </footer>
+</div>
+<!-- START SIGMA IMPORTS -->
+<script src="../src/sigma.core.js"></script>
+<script src="../src/conrad.js"></script>
+<script src="../src/utils/sigma.utils.js"></script>
+<script src="../src/utils/sigma.polyfills.js"></script>
+<script src="../src/sigma.settings.js"></script>
+<script src="../src/classes/sigma.classes.dispatcher.js"></script>
+<script src="../src/classes/sigma.classes.configurable.js"></script>
+<script src="../src/classes/sigma.classes.graph.js"></script>
+<script src="../src/classes/sigma.classes.camera.js"></script>
+<script src="../src/classes/sigma.classes.quad.js"></script>
+<script src="../src/classes/sigma.classes.edgequad.js"></script>
+<script src="../src/captors/sigma.captors.mouse.js"></script>
+<script src="../src/captors/sigma.captors.touch.js"></script>
+<script src="../src/renderers/sigma.renderers.canvas.js"></script>
+<script src="../src/renderers/sigma.renderers.webgl.js"></script>
+<script src="../src/renderers/sigma.renderers.svg.js"></script>
+<script src="../src/renderers/sigma.renderers.def.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+<script src="../src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.nodes.invisible.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.invisible.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
+<script src="../src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.utils.js"></script>
+<script src="../src/renderers/svg/sigma.svg.nodes.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.edges.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.edges.curve.js"></script>
+<script src="../src/renderers/svg/sigma.svg.labels.def.js"></script>
+<script src="../src/renderers/svg/sigma.svg.hovers.def.js"></script>
+<script src="../src/middlewares/sigma.middlewares.rescale.js"></script>
+<script src="../src/middlewares/sigma.middlewares.copy.js"></script>
+<script src="../src/misc/sigma.misc.animation.js"></script>
+<script src="../src/misc/sigma.misc.bindEvents.js"></script>
+<script src="../src/misc/sigma.misc.bindDOMEvents.js"></script>
+<script src="../src/misc/sigma.misc.drawHovers.js"></script>
+<script src="../plugins/sigma.parsers.json/sigma.parsers.json.js"></script>
+<!-- END SIGMA IMPORTS -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.8/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.js" type="text/javascript"
+        charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tooltipster/3.0.5/js/jquery.tooltipster.js" type="text/javascript"
+        charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.0/handlebars.min.js" type="text/javascript"
+        charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.4.0/lodash.min.js" type="text/javascript"
+        charset="utf-8"></script>
+<script src="javascripts/jquery.remodal.js"></script>
+
+<script src="javascripts/app.js"></script>
+
+<script>
+    app.initialize();
+</script>
+
+<!--Google Analytics-->
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+            (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-60790831-1', 'auto');
+    ga('send', 'pageview');
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
+
+

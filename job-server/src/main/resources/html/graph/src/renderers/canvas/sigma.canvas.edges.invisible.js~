@@ -1,0 +1,9 @@
+;(function() {
+  'use strict';
+
+  sigma.utils.pkg('sigma.canvas.edges');
+
+  sigma.canvas.edges.def = function(edge, source, target, context, settings) {
+//Do nothing
+  };
+})();

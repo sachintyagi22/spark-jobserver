@@ -1,0 +1,332 @@
+body {
+    background: #93B1C6;
+    color: #3F3F3F;
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    font-size: 14px;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+header {
+    font-weight: 600;
+    background: #C7D0D5;
+    color: #EC583A;
+    border-bottom: 1px solid #F5F5F5;
+    height: 50px;
+}
+
+header h2 {
+    line-height: 60px;
+}
+
+.container {
+    padding: 10px 10px 0 10px;
+}
+
+.editor {
+    height: 90%;
+}
+
+.result {
+    height: 47%;
+    width: 100%;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+div.topPanel {
+    overflow: hidden;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted #F5F5F5;
+    background: #C7D0D5;
+    /*border-bottom: 1px solid #F5F5F5;*/
+    /*height: 50px;*/
+}
+
+div.topPanel span.logo {
+    font-weight: 600;
+    color: #EC583A;
+    float: left;
+    font-size: 24px;
+    padding-left: 15px;
+    padding-right: 5px;
+}
+
+div.searchForm {
+    width: 70%;
+    float: left;
+}
+
+div.searchForm > form {
+    margin: 0;
+}
+
+span.searchIcon {
+    position: relative;
+    left: 20px;
+}
+
+span.settingsIcon {
+    float: right;
+    margin-right: 15px;
+    margin-top: 8px;
+    font-size: 18px;
+}
+
+span.settingsIcon a {
+    color: #EC583A;
+}
+
+input#searchString {
+    width: 90%;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+    color: #3F3F3F;
+    padding: 10px 5px 10px 20px;
+    font-size: 14px;
+}
+
+footer {
+    background: #C7D0D5;
+    color: #EC583A;
+    border-top: 1px solid #F5F5F5;
+    height: 50px;
+}
+
+.remodal, .remodal * {
+    font-family: "Open Sans", sans-serif;
+}
+
+/*The close icon doesn't show up so not displaying it for now*/
+.remodal-close {
+    display: none;
+}
+
+/* over-riding default size*/
+.remodal select,
+.remodal textarea,
+.remodal input,
+.remodal select:focus,
+.remodal textarea:focus,
+.remodal input:focus {
+    font-size: 14px;
+}
+
+/* over-riding button styles*/
+.remodal-confirm,
+.remodal-cancel {
+    font-size: 10pt;
+
+    display: inline-block;
+
+    width: 120px;
+    margin: 0 0 5px 0;
+    padding: 5px 0;
+
+    cursor: pointer;
+    -webkit-transition: all 0.2s ease-out;
+    -moz-transition: all 0.2s ease-out;
+    -o-transition: all 0.2s ease-out;
+    transition: all 0.2s ease-out;
+    text-align: center;
+    text-decoration: none;
+
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    background-clip: padding-box;
+}
+
+.remodal-confirm, .remodal-confirm:hover,
+.remodal-confirm:active {
+    color: #FDFCFA;
+    background: #EC583A;
+    border: 2px solid #FF7148;
+}
+
+div.remodal {
+    padding: 0;
+    border-radius: 0;
+    width: 400px;
+}
+
+div.remodal div.heading {
+    background: #C7D0D5;
+    color: #EC583A;
+    border-bottom: 1px solid #F5F5F5;
+    height: 50px;
+    font-size: 24px;
+    line-height: 45px;
+}
+
+div.modalContent {
+    background: #93B1C6;
+    color: #3F3F3F;
+    padding: 20px;
+    font-size: 14px;
+}
+
+div.modalContent form input {
+    padding: 6px;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+    color: #3F3F3F;
+    margin-bottom: 20px;
+}
+
+div.modalFooter {
+    padding-top: 5px;
+}
+
+div.searchResults {
+    overflow: hidden;
+}
+
+div.repoInfo select {
+    width: 100%;
+}
+
+div.rightContainer {
+    float: right;
+    width: 60%;
+    height: 98%;
+    border: 1px solid #F5F5F5;
+    margin-bottom: 10px;
+}
+
+div.resultContainer {
+    padding: 0 5px 5px 5px;
+    height: 98%;
+    overflow-y: auto;
+}
+
+.alert-box {
+    color: #555;
+    padding: 10px 5px;
+    margin: 10px;
+}
+
+.alert-box span {
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.alert-box.error {
+    background: #ffecec;
+    border: 1px solid #f5aca6;
+}
+
+.alert-box.error .fa-times-circle {
+    color: red;
+}
+
+.ace_layer.ace_text-layer .ace_line .ace_fold, .ace_line .ace_fold:hover {
+    background-image: none;
+    border: 0px;
+    border-radius: 0px;
+    color: #000;
+}
+
+span.viewOptions a {
+    color: #EC583A;
+    text-decoration: none;
+}
+
+span.viewOptions .fa {
+    margin-right: 5px;
+}
+
+h3 {
+    margin: 5px 0;
+}
+
+div.rightContainer.fullWidth {
+    width: 100%;
+}
+
+#connectionError {
+    display: none;
+}
+
+div.leftPanelPadding {
+    padding: 5px;
+}
+
+.tabs {
+    overflow: hidden;
+}
+
+.tabs div {
+    width: 50%;
+    display: inline-block;
+    height: 30px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 30px;
+    font-weight: 600;
+    float: left;
+    background: #C7D0D5;
+    color: #EC583A;
+    border-bottom: 1px solid #F5F5F5;
+}
+
+.tabs div.active {
+    background: #EC583A;
+    cursor: default;
+    color: #C7D0D5;
+    border: 1px solid #F5F5F5;
+    border-bottom: none;
+}
+
+li.clickable {
+    cursor: pointer;
+}
+
+div#leftPanel {
+    /*padding: 5px;*/
+    height: 100%;
+    float: left;
+    width: 38%;
+    padding-bottom: 10px;
+}
+
+div.leftPanelContent {
+    /*height: 94%;*/
+    overflow-y: auto;
+    border: 1px solid #F5F5F5;
+    border-top: none;
+}
+
+span.documentation {
+    font-size: 10px;
+}
+
+div.fileHeader {
+    background: #eaeaea;
+    padding: 5px;
+}
+
+div.fileHeader a {
+    color: #EC583A;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+div.resultHeader {
+    background-color: #C7D0D5;
+    height: 16px;
+}
+
+span.codeIcon {
+    margin: 2px;
+}
+
+div.repoInfo {
+    border: 1px solid #F5F5F5;
+    height: 100%;
+}
