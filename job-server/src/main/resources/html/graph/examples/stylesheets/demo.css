@@ -330,3 +330,72 @@ div.repoInfo {
     border: 1px solid #F5F5F5;
     height: 100%;
 }
+
+/*-----------------------------------------------------------------------------------------------------------*/
+path.link {
+/*  fill: #F30;
+  stroke: #F30;*/
+  fill:none;
+  stroke:#000;
+  /*stroke-width: .5px;*/
+  cursor:pointer;
+}
+
+path.suitPath {
+  fill:none;
+  stroke:#000;
+  /*stroke-width: 1.5px;*/
+}
+
+path.changedSuitPath {
+  fill:none;
+  stroke:#F30;
+  stroke-width: 1.5px;
+}
+
+
+circle.clickableNode {
+ /* opacity: 0.7;*/
+  fill: #93B1C6;
+  stroke: #333;
+  stroke-width: 2.5px;
+  cursor:pointer;
+}
+
+circle.NonClickableNode {
+ /* opacity: 0.7;*/
+  fill: #F30;
+  stroke: #F30;
+  stroke-width: 2.5px;
+  cursor:none;
+}
+
+text.nodeText {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+text.nodeShadow {
+  opacity: 0.2;
+  stroke: #fff;
+  stroke-width: 2px;
+  stroke-opacity: .8;
+  pointer-events: none;
+}
+
+svg{
+  background-color: #93B1C6;
+}
+
+#graph-usage-submit {
+    background-color: #E3E1B8; 
+    padding: 2px 4px;
+    border: 1px solid #000;
+    border-color: #aaa #444 #444 #aaa;
+    color: #000;
+    cursor:pointer;
+}
+#graph-usage-submit:hover { 
+    background-color: #46000D;
+    color: rgb(240,248,255);
+ }
