@@ -97,15 +97,9 @@ var app = function () {
 
       function init() {
 
-        var width=5000,
-            height=5000;
         graphTabWidth=graphTab.width();
         graphTabHeight=graphTab.height();
-        
-        //create SVG tag
-        svg = d3.select("#graph-container").append("svg:svg")
-            .attr("width", width)
-            .attr("height", height);
+
         var screenHeight = screen.availHeight, topPanel = $(".topPanel")
                 .outerHeight(), containerHeight;
 
@@ -219,6 +213,8 @@ var app = function () {
     }
 
     function callGraphSuccess(d, clazz) {
+            var width=5000,
+            height=5000;       
             //Read the data from d.result
             graph = JSON.parse(d.result);
             orginalLinks=graph.edges;
@@ -233,7 +229,30 @@ var app = function () {
                 startLinks=[];
             var rootNode=getRootNode(); 
             startNodes[0]=rootNode;
-            svg.selectAll("*").remove();
+            if(svg){
+             svg.selectAll("*").remove();
+            }else{
+                //create SVG tag
+                svg = d3.select("#graph-container").append("svg:svg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("pointer-events", "all")
+                .append('svg:g')
+                .call(d3.behavior.zoom().on("zoom", redraw))
+                .append('svg:g');
+            }
+            svg.append('svg:rect')
+            .attr('width', width)
+            .attr('height', height)
+            .attr('fill', 'none');
+
+            function redraw() {
+              svg.attr("transform",
+                  "translate(" + d3.event.translate + ")"
+                  + " scale(" + d3.event.scale + ")");
+              //node.attr("font-size", (nodeFontSize / d3.event.scale) + "px");
+            };
+            
             createGraph(startNodes,startLinks);
 
             $('#graph-usage-submit').on('click',function(){
@@ -486,7 +505,7 @@ var app = function () {
 
                    if(currentValue){
                         currentValue=parseFloat(currentValue.replace('px',''));
-                        $('#path'+id).css('stroke-width', ((currentValue*1.2)+'px'));
+                        $('#path'+id).css('stroke-width', ((currentValue*1.5)+'px'));
                         $('#path'+id).css('stroke', '#F30');
                         $('#path'+id).attr('marker-end','url(#changedSuit)');
                     }
@@ -586,6 +605,7 @@ var app = function () {
                     var sourceOutLinks=sourceNode.outDegree;
                     var shouldChangeActualLength=false;
                     if(sourceOutLinks){
+                        var counter=1;
                         for(var ii=0,ll=sourceOutLinks.length;ii<ll;ii++){
                             links.push(sourceOutLinks[ii]);
                             var nodeIndex=nodes.indexOf(sourceOutLinks[ii].target);
@@ -594,11 +614,16 @@ var app = function () {
                                 var actualSourceY=sourceNode.y;
                                 sourceOutLinks[ii].target.fixed=true;
                                 sourceOutLinks[ii].target.y=actualLength;
-                            
-                                if(ii%2==0 || actualSourceX<40){
-                                    sourceOutLinks[ii].target.x=actualSourceX+40*ii;
+                                
+                                if(ii===0){
+                                    sourceOutLinks[ii].target.x=actualSourceX;
+                                }
+                                else if(ii%2==0 || actualSourceX<40){
+                                    sourceOutLinks[ii].target.x=actualSourceX+80*counter;
+                                    counter++;
                                 }else{
-                                    sourceOutLinks[ii].target.x=actualSourceX-40*ii;                   
+                                    sourceOutLinks[ii].target.y=(actualLength=actualLength+10);                                    
+                                    sourceOutLinks[ii].target.x=actualSourceX-80*counter;                  
                                 }
                                 nodes.push(sourceOutLinks[ii].target);
                                 shouldChangeActualLength=true;
